@@ -3,13 +3,13 @@ package obj_lib;
 public final class Aquarium {
     private static volatile Aquarium instance;
 
-    private byte[][] field;
+    private int[][] field;
 
-    private Aquarium(byte[][] field) {
+    private Aquarium(int[][] field) {
         this.field = field;
     }
 
-    public static Aquarium getInstance(byte[][] field) {
+    public static Aquarium getInstance(int[][] field) {
         Aquarium result = instance;
         if (result != null) {
             return result;
@@ -20,6 +20,15 @@ public final class Aquarium {
                 instance = new Aquarium(field);
             }
             return instance;
+        }
+    }
+
+    public void showField() {
+        for (int[] line : this.field){
+            for (int cell: line) {
+                System.out.print(cell + " ");
+            }
+            System.out.println();
         }
     }
 }
