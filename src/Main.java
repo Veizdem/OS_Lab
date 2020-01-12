@@ -6,13 +6,15 @@ import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
-        System.out.println("Лабораторная работа по операционным системам");
+        System.out.println("Несколько");
+        System.out.println("строк");
+        System.out.println("для");
+        System.out.println("статистической");
+        System.out.println("информации");
 
         String filename = "aquarium.txt";
         File file = new File(filename);
         if (!file.exists()) {
-            System.out.println("Генерация аквариума...");
-
             try {
                 FileWriter fileWriter = new FileWriter(filename);
                 Random random = new Random();
@@ -31,7 +33,6 @@ public class Main {
             }
         }
 
-        System.out.println("Читаем данные аквариума...");
         int[][] arr = new int[20][80];
         try {
             FileReader fileReader = new FileReader(filename);
@@ -48,8 +49,6 @@ public class Main {
         }
 
         Aquarium aquarium = Aquarium.getInstance(arr);
-
-        System.out.println("Аквариум выглядит так:");
         aquarium.showField();
     }
 }
