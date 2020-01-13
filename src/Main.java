@@ -35,7 +35,7 @@ public class Main {
         }
 
         // массив для инициализации игрового поля
-        int[][] arr = new int[20][80];
+        byte[][] arr = new byte[20][80];
 
         // пытаемся прочитать файл, ведь он гарантированно существует
         try {
@@ -46,7 +46,7 @@ public class Main {
             for (int i = 0; i < 20; i++) {
                 char[] sym = scanner.nextLine().toCharArray();
                 for (int j = 0; j < sym.length; j++) {
-                    arr[i][j] = Integer.parseInt(String.valueOf(sym[j]));
+                    arr[i][j] = Byte.parseByte(String.valueOf(sym[j]));
                 }
             }
 

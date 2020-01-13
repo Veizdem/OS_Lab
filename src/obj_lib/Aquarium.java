@@ -5,13 +5,13 @@ import java.io.IOException;
 public final class Aquarium {
     private static volatile Aquarium instance;
 
-    private int[][] field;
+    private byte[][] field;
 
-    private Aquarium(int[][] field) {
+    private Aquarium(byte[][] field) {
         this.field = field;
     }
 
-    public static Aquarium getInstance(int[][] field) {
+    public static Aquarium getInstance(byte[][] field) {
         Aquarium result = instance;
         if (result != null) {
             return result;
@@ -39,8 +39,8 @@ public final class Aquarium {
         // форматируем и выводим поле
         StringBuilder text = new StringBuilder();
 
-        for (int[] line : this.field){
-            for (int cell: line) {
+        for (byte[] line : this.field){
+            for (byte cell: line) {
                 String fmt =  switch (cell) {
                     case 0 -> "\033[34m";
                     case 1 -> "\033[33m";
