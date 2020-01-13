@@ -29,6 +29,10 @@ public class AquaProcess {
     // код процесса
     private String[] code;
 
+    public AquaProcess() {
+
+    }
+
     public byte getId() {
         return id;
     }
@@ -156,4 +160,27 @@ public class AquaProcess {
     public void setCode(String[] code) {
         this.code = code;
     }
+
+    // сделать щаг в выбранном направлении
+    public void makeStep() {
+
+    }
+
+    // повернуть налево
+    public void goLeft() {
+
+    }
+
+    // повернуть направо
+    public void goRight() {
+
+    }
+
+    // сравнить два операнда
+    public void compare(byte o1, byte o2) {
+
+    }
+
+    // если результат сравнения о1 больше о2
+
 }

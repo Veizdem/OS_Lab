@@ -1,3 +1,4 @@
+import obj_lib.AquaProcess;
 import obj_lib.Aquarium;
 
 import java.io.*;
@@ -62,5 +63,8 @@ public class Main {
 
         // Выводим на экран данные игрового поля
         aquarium.showField();
+
+        //создаем нашу очередь
+        AquaProcess[] processes = new AquaProcess[30];
     }
 }

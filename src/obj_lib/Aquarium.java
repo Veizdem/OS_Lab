@@ -25,6 +25,18 @@ public final class Aquarium {
         }
     }
 
+    public byte[][] getField() {
+        synchronized (Aquarium.class) {
+            return field;
+        }
+    }
+
+    public void setField(byte[][] field) {
+        synchronized (Aquarium.class) {
+            this.field = field;
+        }
+    }
+
     public void showField() {
         // Стереть все что на экране
         System.out.println("\033[2J");
