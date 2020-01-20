@@ -2,12 +2,12 @@ import obj_lib.AquaProcess;
 import obj_lib.Aquarium;
 
 import java.io.*;
-import java.util.Arrays;
-import java.util.Random;
-import java.util.Scanner;
+import java.util.*;
 
 public class Main {
     public static void main(String[] args) {
+        AquaProcess process;
+
         // имя для файла с игровым полем
         String filename = "aquarium.txt";
         File file = new File(filename);
@@ -64,45 +64,68 @@ public class Main {
 
         // читаем наши "программы" в процессы и инициируем их выполнение
         //создаем нашу очередь
-        AquaProcess[] processes = new AquaProcess[30];
+        Queue<AquaProcess> processes = new LinkedList<>();
+
+        // Получаем список файлов "программ"
+        File programFolder = new File("programFolder");
+        File[] programs = programFolder.listFiles();
+
+        assert programs != null;
+        // для каждого файла создаем процесс и добавляем его в конец очереди
+        for (File program: programs) {
+            process = new AquaProcess();
+            process.readProgram(program);
+            processes.add(process);
+        }
 
         // бесконечный цикл работы
         // стартуем с первой программы в очередии и 1 тика
-        int start = 0;
         int tick = 1;
         AquaProcess currentProc;
         byte priority;
         String currentCode = null;
         while (tick <= 1000) {
             // берем программу из очереди
-            currentProc = processes[start];
-            // узнаем ее приоритет
-            priority = currentProc.getPriority();
-            // выполняем инструкции согласно приоритета
-            for (int i = 0; i < currentProc.getCode().length; i++) {
-                currentCode = currentProc.getCode()[i];
-                currentProc.runCode();
-            }
+            currentProc = processes.peek();
+
             // Стереть все что на экране
             System.out.println("\033[2J");
             // Какой тик
             System.out.println("Tick:" + tick);
-            // Какая программа
-            System.out.println("Name: " + Arrays.toString(currentProc.getName()));
-            // Какой у программы приоритет
-            System.out.println("Priority: " + priority);
-            // Какое действие
-            System.out.println("CODE: " + currentCode);
+            if (currentProc != null && currentProc.getCommandCounter() < currentProc.getCode().size()) {
+                // Какая программа
+                System.out.println("Name: " + currentProc.getName() +
+                        "(" + currentProc.getX() + ", " + currentProc.getY() + ")");
+                // узнаем ее приоритет
+                priority = currentProc.getPriority();
+                // Какой у программы приоритет
+                System.out.println("Priority: " + priority);
+                // выполняем инструкции согласно приоритета
+                int size = currentProc.getCode().size();
+                for (int i = 0; i < size && i < priority; i++) {
+                    byte commandIndex = currentProc.getCommandCounter();
+                    if (commandIndex < size) {
+                        currentCode = currentProc.getCode().get(commandIndex);
+                        currentProc.runCode();
+                    } else {
+                        processes.remove(currentProc);
+                        currentProc = null;
+                        break;
+                    }
+                }
+                // Какое действие
+                System.out.println("CODE: " + currentCode);
+                if (currentProc != null) {
+                    // этот процесс уже отработал, нужно его убрать из головы очереди
+                    processes.remove(currentProc);
+                    //задаем переход к другому процессу в конце тика
+                    processes.add(currentProc);
+                }
+            }
             // Выводим поле
             aquarium.showField();
 
             tick++;
-            //задаем переход к другому процессу в конце тика
-            if (start < processes.length) {
-                start++;
-            } else {
-                start = 0;
-            }
 
             // замораживаем программу на 2 секунды для наглядности
             try {
