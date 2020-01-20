@@ -11,6 +11,7 @@ public class AquaProcess {
     private byte reserve1;
     private byte reserve2;
     private String[] name;
+    private byte priority;
 
     // системные
     private byte hp;
@@ -31,6 +32,14 @@ public class AquaProcess {
 
     public AquaProcess() {
 
+    }
+
+    public byte getPriority() {
+        return priority;
+    }
+
+    public void setPriority(byte priority) {
+        this.priority = priority;
     }
 
     public byte getId() {
@@ -183,4 +192,9 @@ public class AquaProcess {
 
     // если результат сравнения о1 больше о2
 
+
+    // выполнить код (читаем текущую строку инструкции, парсим ее, выполняем метод, ставим к исполнению следующую)
+    public void runCode() {
+
+    }
 }

@@ -2,6 +2,7 @@ import obj_lib.AquaProcess;
 import obj_lib.Aquarium;
 
 import java.io.*;
+import java.util.Arrays;
 import java.util.Random;
 import java.util.Scanner;
 
@@ -61,10 +62,55 @@ public class Main {
         // игровое поле может существовать только в елдиничном экземпляре, потому применен паттерн Singleton
         Aquarium aquarium = Aquarium.getInstance(arr);
 
-        // Выводим на экран данные игрового поля
-        aquarium.showField();
-
+        // читаем наши "программы" в процессы и инициируем их выполнение
         //создаем нашу очередь
         AquaProcess[] processes = new AquaProcess[30];
+
+        // бесконечный цикл работы
+        // стартуем с первой программы в очередии и 1 тика
+        int start = 0;
+        int tick = 1;
+        AquaProcess currentProc;
+        byte priority;
+        String currentCode = null;
+        while (tick <= 1000) {
+            // берем программу из очереди
+            currentProc = processes[start];
+            // узнаем ее приоритет
+            priority = currentProc.getPriority();
+            // выполняем инструкции согласно приоритета
+            for (int i = 0; i < currentProc.getCode().length; i++) {
+                currentCode = currentProc.getCode()[i];
+                currentProc.runCode();
+            }
+            // Стереть все что на экране
+            System.out.println("\033[2J");
+            // Какой тик
+            System.out.println("Tick:" + tick);
+            // Какая программа
+            System.out.println("Name: " + Arrays.toString(currentProc.getName()));
+            // Какой у программы приоритет
+            System.out.println("Priority: " + priority);
+            // Какое действие
+            System.out.println("CODE: " + currentCode);
+            // Выводим поле
+            aquarium.showField();
+
+            tick++;
+            //задаем переход к другому процессу в конце тика
+            if (start < processes.length) {
+                start++;
+            } else {
+                start = 0;
+            }
+
+            // замораживаем программу на 2 секунды для наглядности
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
     }
 }

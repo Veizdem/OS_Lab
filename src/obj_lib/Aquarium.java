@@ -25,6 +25,18 @@ public final class Aquarium {
         }
     }
 
+    public byte getFieldValue(int i, int j){
+        synchronized (Aquarium.class) {
+            return field[i][j];
+        }
+    }
+
+    public void setFieldValue(int i, int j, byte val){
+        synchronized (Aquarium.class) {
+            this.field[i][j] = val;
+        }
+    }
+
     public byte[][] getField() {
         synchronized (Aquarium.class) {
             return field;
@@ -38,16 +50,6 @@ public final class Aquarium {
     }
 
     public void showField() {
-        // Стереть все что на экране
-        System.out.println("\033[2J");
-
-        // тут будут служебные строки
-        System.out.println("Несколько");
-        System.out.println("строк");
-        System.out.println("для");
-        System.out.println("статистической");
-        System.out.println("информации");
-
         // форматируем и выводим поле
         StringBuilder text = new StringBuilder();
 
