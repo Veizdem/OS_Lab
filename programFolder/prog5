@@ -1,9 +1,9 @@
-1
-0
-0
-1
-PROG1
 2
+14
+14
+1
+PROG5
+1
 2
 CMPR -1
 EQ 2 4
@@ -15,7 +15,7 @@ MR
 GT 0
 CMPR 2
 EQ 10 13
-EAT
+PLT
 STP
 GT 0
 STP

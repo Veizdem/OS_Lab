@@ -12,7 +12,7 @@ public class AquaProcess {
     private byte type;
     private byte x;
     private byte y;
-    private byte direction;
+    private byte direction; // 0 лево, 1 вверх, 2 вправо, 3 вниз
     private byte reserve1;
     private byte reserve2;
     private String name;
@@ -20,14 +20,14 @@ public class AquaProcess {
 
     // системные
     private byte hp;
-    private byte visibleObject;
+    private byte visibleObject; // наши предметы "на дне"
     private byte dist;
     private byte errCode;
     private byte reserve3;
     private byte reserve4;
 
     // данные
-    private byte data1;
+    private boolean data1;
     private byte data2;
     private byte data3;
     private byte data4;
@@ -180,61 +180,198 @@ public class AquaProcess {
 
     // сделать щаг в выбранном направлении
     public void makeStep() {
+        switch (direction) {
+            case 0 -> {
+                if (y != 0) {
+                    this.y--;
+                }
+            }
+            case 1 -> {
+                if (x != 0) {
+                    this.x--;
+                }
+            }
+            case 2 -> {
+                if (y < 79) {
+                    this.y++;
+                }
+            }
+            case 3 -> {
+                if (x < 19) {
+                    this.x++;
+                }
+            }
+        }
 
+        this.commandCounter++;
     }
 
     // повернуть налево
-    public void goLeft() {
-
+    public void goLeft(Aquarium aquarium) {
+        switch (direction) {
+            case 0 -> {
+                this.direction = 3;
+                if (x < 19) {
+                    this.visibleObject = aquarium.getFieldValue(x + 1, y);
+                } else {
+                    this.visibleObject = -1;
+                }
+            }
+            case 1 -> {
+                this.direction = 0;
+                if (y != 0) {
+                    this.visibleObject = aquarium.getFieldValue(x, y - 1);
+                } else {
+                    this.visibleObject = -1;
+                }
+            }
+            case 2 -> {
+                this.direction = 1;
+                if (x != 0) {
+                    this.visibleObject = aquarium.getFieldValue(x - 1, y);
+                } else {
+                    this.visibleObject = -1;
+                }
+            }
+            case 3 -> {
+                this.direction = 2;
+                if (y < 79) {
+                    this.visibleObject = aquarium.getFieldValue(x, y + 1);
+                } else {
+                    this.visibleObject = -1;
+                }
+            }
+        }
+        this.commandCounter++;
     }
 
     // повернуть направо
-    public void goRight() {
-
+    public void goRight(Aquarium aquarium) {
+        switch (direction) {
+            case 0 -> {
+                this.direction = 1;
+                if (x != 0) {
+                    this.visibleObject = aquarium.getFieldValue(x - 1, y);
+                } else {
+                    this.visibleObject = -1;
+                }
+            }
+            case 1 -> {
+                this.direction = 2;
+                if (y < 79) {
+                    this.visibleObject = aquarium.getFieldValue(x, y + 1);
+                } else {
+                    this.visibleObject = -1;
+                }
+            }
+            case 2 -> {
+                this.direction = 3;
+                if (x < 19) {
+                    this.visibleObject = aquarium.getFieldValue(x + 1, y);
+                } else {
+                    this.visibleObject = -1;
+                }
+            }
+            case 3 -> {
+                this.direction = 0;
+                if (y != 0) {
+                    this.visibleObject = aquarium.getFieldValue(x, y - 1);
+                } else {
+                    this.visibleObject = -1;
+                }
+            }
+        }
+        this.commandCounter++;
     }
 
     // сравнить два операнда
-    public void compare(byte o1, byte o2) {
-
-    }
-
-    // если результат сравнения о1 больше о2
-    private void larger(byte line) {
-
-    }
-
-    // если результат сравнения о1 меньше о2
-    private void less(byte line) {
-
+    public void compare(String s) {
+        this.data1 = Byte.parseByte(s) == visibleObject;
+        this.commandCounter++;
     }
 
     // если результат сравнения о1 равен о2
-    private void equals(byte line) {
-
+    private void equals(String s, String s1) {
+        if (data1) {
+            this.commandCounter = Byte.parseByte(s);
+        } else {
+            this.commandCounter = Byte.parseByte(s1);
+        }
     }
 
     // переход к строке кода
-    private void gotoLine(byte line){
+    private void gotoLine(String s){
+        this.commandCounter = Byte.parseByte(s);
+    }
 
+    // "съесть" траву на дне
+    private void eat(Aquarium aquarium) {
+        byte val = 1;
+        if (visibleObject == 2) {
+            setNewValueToField(aquarium, val);
+        }
+        this.commandCounter++;
+    }
+
+    // "посадить" траву в песок
+    private void plant(Aquarium aquarium) {
+        byte val = 2;
+        if (visibleObject == 1) {
+            setNewValueToField(aquarium, val);
+        }
+        this.commandCounter++;
+    }
+
+    private void setNewValueToField(Aquarium aquarium, byte val) {
+        switch (direction) {
+            case 0 -> {
+                if (y != 0) {
+                    aquarium.setFieldValue(x, y - 1, val);
+                }
+            }
+            case 1 -> {
+                if (x != 0) {
+                    aquarium.setFieldValue(x - 1, y, val);
+                }
+            }
+            case 2 -> {
+                if (y < 79) {
+                    aquarium.setFieldValue(x, y + 1, val);
+                }
+            }
+            case 3 -> {
+                if (x < 19) {
+                    aquarium.setFieldValue(x + 1, y, val);
+                }
+            }
+        }
     }
 
     // выполнить код (читаем текущую строку инструкции, парсим ее, выполняем метод, ставим к исполнению следующую)
-    public void runCode() {
-        byte next = 0;
+    public void runCode(Aquarium aquarium) {
         // читаем строку которая должна быть в последовательности согласно поля commandCounter
         String command = code.get(commandCounter);
         // разбираем что она должна сделать
         // выполняем нужный метод
         if (command.contains("ML")) {
-            this.goLeft();
+            this.goLeft(aquarium);
         } else if (command.contains("STP")) {
             this.makeStep();
-        }
-        // переносим код выпоняемой строки в номер, который будет указан по результату работы предыдущего кода
-        if (next == 0) {
-            this.commandCounter++;
-        } else {
-            this.commandCounter = next;
+        } else if (command.contains("MR")) {
+            this.goRight(aquarium);
+        } else if (command.contains("CMPR")) {
+            String[] subStr = command.split(" ");
+            this.compare(subStr[1]);
+        } else if (command.contains("EQ")) {
+            String[] subStr = command.split(" ");
+            this.equals(subStr[1], subStr[2]);
+        } else if (command.contains("GT")) {
+            String[] subStr = command.split(" ");
+            this.gotoLine(subStr[1]);
+        } else if (command.contains("EAT")) {
+            this.eat(aquarium);
+        } else if (command.contains("PLT")) {
+            this.plant(aquarium);
         }
     }
 

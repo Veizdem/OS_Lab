@@ -83,8 +83,9 @@ public class Main {
         int tick = 1;
         AquaProcess currentProc;
         byte priority;
-        String currentCode = null;
+        String currentCode;
         while (tick <= 1000) {
+            currentCode = "";
             // берем программу из очереди
             currentProc = processes.peek();
 
@@ -94,8 +95,7 @@ public class Main {
             System.out.println("Tick:" + tick);
             if (currentProc != null && currentProc.getCommandCounter() < currentProc.getCode().size()) {
                 // Какая программа
-                System.out.println("Name: " + currentProc.getName() +
-                        "(" + currentProc.getX() + ", " + currentProc.getY() + ")");
+                System.out.println("Name: " + currentProc.getName() + "(" + currentProc.getX() + ", " + currentProc.getY() + ")");
                 // узнаем ее приоритет
                 priority = currentProc.getPriority();
                 // Какой у программы приоритет
@@ -105,8 +105,8 @@ public class Main {
                 for (int i = 0; i < size && i < priority; i++) {
                     byte commandIndex = currentProc.getCommandCounter();
                     if (commandIndex < size) {
-                        currentCode = currentProc.getCode().get(commandIndex);
-                        currentProc.runCode();
+                        currentCode = currentCode + currentProc.getCode().get(commandIndex) + " ";
+                        currentProc.runCode(aquarium);
                     } else {
                         processes.remove(currentProc);
                         currentProc = null;
@@ -115,6 +115,7 @@ public class Main {
                 }
                 // Какое действие
                 System.out.println("CODE: " + currentCode);
+                System.out.println("Coordinates (" + currentProc.getX() + ", " + currentProc.getY() + ")");
                 if (currentProc != null) {
                     // этот процесс уже отработал, нужно его убрать из головы очереди
                     processes.remove(currentProc);
@@ -129,7 +130,7 @@ public class Main {
 
             // замораживаем программу на 2 секунды для наглядности
             try {
-                Thread.sleep(2000);
+                Thread.sleep(500);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
