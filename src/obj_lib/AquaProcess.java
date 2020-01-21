@@ -179,26 +179,46 @@ public class AquaProcess {
     }
 
     // сделать щаг в выбранном направлении
-    public void makeStep() {
+    public void makeStep(Aquarium aquarium) {
         switch (direction) {
             case 0 -> {
                 if (y != 0) {
                     this.y--;
+                    if (y != 0) {
+                        this.visibleObject = aquarium.getFieldValue(x, y - 1);
+                    } else {
+                        this.visibleObject = -1;
+                    }
                 }
             }
             case 1 -> {
                 if (x != 0) {
                     this.x--;
+                    if (x != 0) {
+                        this.visibleObject = aquarium.getFieldValue(x - 1, y);
+                    } else {
+                        this.visibleObject = -1;
+                    }
                 }
             }
             case 2 -> {
                 if (y < 79) {
                     this.y++;
+                    if (y < 79) {
+                        this.visibleObject = aquarium.getFieldValue(x, y + 1);
+                    } else {
+                        this.visibleObject = -1;
+                    }
                 }
             }
             case 3 -> {
                 if (x < 19) {
                     this.x++;
+                    if (x < 19) {
+                        this.visibleObject = aquarium.getFieldValue(x + 1, y);
+                    } else {
+                        this.visibleObject = -1;
+                    }
                 }
             }
         }
@@ -306,7 +326,7 @@ public class AquaProcess {
 
     // "съесть" траву на дне
     private void eat(Aquarium aquarium) {
-        byte val = 1;
+        byte val = 8;
         if (visibleObject == 2) {
             setNewValueToField(aquarium, val);
         }
@@ -315,7 +335,7 @@ public class AquaProcess {
 
     // "посадить" траву в песок
     private void plant(Aquarium aquarium) {
-        byte val = 2;
+        byte val = 8;
         if (visibleObject == 1) {
             setNewValueToField(aquarium, val);
         }
@@ -356,7 +376,7 @@ public class AquaProcess {
         if (command.contains("ML")) {
             this.goLeft(aquarium);
         } else if (command.contains("STP")) {
-            this.makeStep();
+            this.makeStep(aquarium);
         } else if (command.contains("MR")) {
             this.goRight(aquarium);
         } else if (command.contains("CMPR")) {
@@ -376,7 +396,7 @@ public class AquaProcess {
     }
 
     // читаем файл и делаем из него начинку процесса
-    public void readProgram(File path) {
+    public void readProgram(File path, Aquarium aquarium) {
         FileReader fileReader;
         try {
             fileReader = new FileReader(path);
@@ -395,6 +415,37 @@ public class AquaProcess {
                     default -> this.code.add(st);
                 }
                 i++;
+            }
+
+            switch (direction) {
+                case 0 -> {
+                    if (y != 0) {
+                        this.visibleObject = aquarium.getFieldValue(x, y - 1);
+                    } else {
+                        this.visibleObject = -1;
+                    }
+                }
+                case 1 -> {
+                    if (x != 0) {
+                        this.visibleObject = aquarium.getFieldValue(x - 1, y);
+                    } else {
+                        this.visibleObject = -1;
+                    }
+                }
+                case 2 -> {
+                    if (y < 79) {
+                        this.visibleObject = aquarium.getFieldValue(x, y + 1);
+                    } else {
+                        this.visibleObject = -1;
+                    }
+                }
+                case 3 -> {
+                    if (x < 19) {
+                        this.visibleObject = aquarium.getFieldValue(x + 1, y);
+                    } else {
+                        this.visibleObject = -1;
+                    }
+                }
             }
         } catch (IOException e) {
             e.printStackTrace();

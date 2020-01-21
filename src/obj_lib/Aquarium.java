@@ -60,7 +60,7 @@ public final class Aquarium {
                     case 1 -> "\033[33m";
                     case 2 -> "\033[32m";
                     case 3 -> "\033[30;1m";
-                    default -> "\033[0m";
+                    default -> "\033[31m";
                 };
                 text.append(fmt).append(cell).append(" \033[0m");
             }
